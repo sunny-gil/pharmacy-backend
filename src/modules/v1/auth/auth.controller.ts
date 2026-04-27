@@ -18,23 +18,23 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
-  @Get('google')
-  @UseGuards(AuthGuard('google'))
-  async googleLogin() {}
+  // @Get('google')
+  // @UseGuards(AuthGuard('google'))
+  // async googleLogin() {}
 
-  @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
-  async googleCallback(@Req() req) {
-    return this.authService.googleLogin(req.user);
-  }
+  // @Get('google/callback')
+  // @UseGuards(AuthGuard('google'))
+  // async googleCallback(@Req() req) {
+  //   return this.authService.googleLogin(req.user);
+  // }
 
-  @Post('send-otp')
-  sendOtp(@Body() dto: SendOtpDto) {
-    return this.authService.sendOtp(dto.phone);
-  }
+  // @Post('send-otp')
+  // sendOtp(@Body() dto: SendOtpDto) {
+  //   return this.authService.sendOtp(dto.phone);
+  // }
 
-  @Post('verify-otp')
-  verifyOtp(@Body() dto: VerifyOtpDto) {
-    return this.authService.verifyOtp(dto.phone, dto.otp);
-  }
+  // @Post('verify-otp')
+  // verifyOtp(@Body() dto: VerifyOtpDto) {
+  //   return this.authService.verifyOtp(dto.phone, dto.otp);
+  // }
 }
