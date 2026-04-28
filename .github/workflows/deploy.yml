@@ -20,11 +20,16 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd /home/ubuntu/pharmacy-backend
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-            git pull origin main
+              nvm use 22
 
-            /usr/bin/npm install
-            /usr/bin/npm run build
+             cd /home/ubuntu/pharmacy-backend
 
-            /usr/bin/pm2 restart pharmacy-api || /usr/bin/pm2 start dist/main.js --name pharmacy-api
+              git pull origin main
+
+             npm install
+               npm run build
+
+              pm2 restart pharmacy-api || pm2 start dist/main.js --name pharmacy-api
