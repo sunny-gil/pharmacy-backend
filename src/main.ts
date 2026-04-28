@@ -19,6 +19,8 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
 
+  console.log("DEPLOY TEST 🚀");  // 👈 यहाँ डालो
+
   await app.listen(port);
 
   // ✅ Proper console logs
