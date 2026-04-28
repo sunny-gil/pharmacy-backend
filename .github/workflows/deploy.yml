@@ -20,8 +20,13 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd /home/ubuntu/pharmacy-backend
-            git pull origin main
+           source ~/.bashrc
+
+              cd /home/ubuntu/pharmacy-backend
+
+              git pull origin main
+
             npm install
             npm run build
-            pm2 restart pharmacy-api
+
+             pm2 restart pharmacy-api || pm2 start dist/main.js --name pharmacy-api
