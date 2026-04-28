@@ -25,6 +25,3 @@ jobs:
             npm install
             npm run build
             pm2 restart pharmacy-api
-
-            - name: Debug host
-  run: echo "HOST=${{ secrets.EC2_HOST }}"
