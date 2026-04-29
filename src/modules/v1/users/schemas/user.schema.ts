@@ -16,7 +16,7 @@ export class User {
   @Prop({ unique: true, sparse: true })
   phone?: string;
 
-  @Prop()
+  @Prop({ default: null })
   googleId?: string;
 
   @Prop({

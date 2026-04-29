@@ -8,10 +8,15 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
 @Post('create')
-create(@Body() dto: CreateUserDto) {
-  return this.usersService.create(dto);
-}
+async create(@Body() dto: CreateUserDto) {
+  const user = await this.usersService.create(dto);
 
+  return {
+    success: true,
+    message: 'User created successfully',
+    data: this.usersService.sanitizeUser(user),
+  };
+}
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req: any) {

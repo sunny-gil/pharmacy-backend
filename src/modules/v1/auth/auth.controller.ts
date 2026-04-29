@@ -18,6 +18,17 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
+
+  @Get('google')
+@UseGuards(AuthGuard('google'))
+async googleLogin() {}
+
+@Get('google/callback')
+@UseGuards(AuthGuard('google'))
+async googleCallback(@Req() req) {
+  return this.authService.googleLogin(req.user);
+}
+
   // @Get('google')
   // @UseGuards(AuthGuard('google'))
   // async googleLogin() {}

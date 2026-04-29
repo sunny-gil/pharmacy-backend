@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -13,9 +17,18 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    return this.usersService.create(dto);
-  }
+    const user = await this.usersService.create(dto);
 
+    return {
+      success: true,
+      message: 'User registered successfully',
+      data: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+      },
+    };
+  }
   async login(dto: LoginDto) {
     const user = await this.usersService.findByEmail(dto.email);
 
@@ -23,7 +36,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const isMatch = await bcrypt.compare(dto.password, user.password);
+    const isMatch = await bcrypt.compare(dto.password, user.password || '');
 
     if (!isMatch) {
       throw new UnauthorizedException('Invalid email or password');
@@ -48,6 +61,31 @@ export class AuthService {
         name: user.name,
       },
     };
+  }
+
+  async googleLogin(googleUser: any) {
+    let user = await this.usersService.findByGoogleId(googleUser.googleId);
+
+    if (!user && googleUser.email) {
+      user = await this.usersService.findByEmail(googleUser.email);
+
+      if (user) {
+        user.googleId = googleUser.googleId;
+        user.provider = 'google';
+        await user.save();
+      }
+    }
+
+    if (!user) {
+      user = await this.usersService.create({
+        name: googleUser.name,
+        email: googleUser.email,
+        googleId: googleUser.googleId,
+        provider: 'google',
+      });
+    }
+
+    return this.generateToken(user);
   }
 
   // async googleLogin(googleUser: any) {
@@ -97,25 +135,25 @@ export class AuthService {
   }
 
   async verifyOtp(phone: string, otp: string) {
-  const record = this.otpStore.get(phone);
+    const record = this.otpStore.get(phone);
 
-  if (!record || record.otp !== otp || Date.now() > record.expires) {
-    throw new BadRequestException('Invalid or expired OTP');
+    if (!record || record.otp !== otp || Date.now() > record.expires) {
+      throw new BadRequestException('Invalid or expired OTP');
+    }
+
+    this.otpStore.delete(phone);
+
+    // 1. find user
+    // let user = await this.usersService.findByPhone(phone);
+
+    // 2. create if not exists
+    // if (!user) {
+    //   user = await this.usersService.create({
+    //     phone,
+    //     provider: 'phone',
+    //   });
+    // }
+
+    // return this.generateToken(user);
   }
-
-  this.otpStore.delete(phone);
-
-  // 1. find user
-  // let user = await this.usersService.findByPhone(phone);
-
-  // 2. create if not exists
-  // if (!user) {
-  //   user = await this.usersService.create({
-  //     phone,
-  //     provider: 'phone',
-  //   });
-  // }
-
-  // return this.generateToken(user);
-}
 }

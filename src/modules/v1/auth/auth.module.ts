@@ -5,11 +5,14 @@ import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { GoogleStrategy } from './strategies/google.strategy';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
     UsersModule,
     ConfigModule,
+    PassportModule,
 
     // ✅ CORRECT WAY
     JwtModule.registerAsync({
@@ -28,6 +31,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, GoogleStrategy],
 })
 export class AuthModule {}
