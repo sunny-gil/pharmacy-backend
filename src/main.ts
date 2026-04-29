@@ -5,6 +5,12 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: false,
+  });
+
   // ✅ Global API prefix
   app.setGlobalPrefix('api');
 
@@ -19,7 +25,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
 
-  console.log("DEPLOY TEST 🚀");  // 👈 यहाँ डालो
+  console.log('DEPLOY TEST 🚀'); // 👈 यहाँ डालो
 
   await app.listen(port);
 
