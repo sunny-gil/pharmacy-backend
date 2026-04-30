@@ -12,6 +12,8 @@ import { ServicesModule } from './modules/v1/services/services.module';
 import { TestimonialsModule } from './modules/v1/testimonials/testimonials.module';
 import { BlogsModule } from './modules/v1/blogs/blogs.module';
 import { ContactModule } from './modules/v1/contact/contact.module';
+import { NewsModule } from './modules/v1/news/news.module';
+import { HomeSlidesModule } from './modules/v1/home-slides/home-slides.module';
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { ContactModule } from './modules/v1/contact/contact.module';
     TestimonialsModule,
     BlogsModule,
     ContactModule,
+    NewsModule,
+    HomeSlidesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
