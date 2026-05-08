@@ -27,7 +27,7 @@ async function bootstrap() {
 
   console.log('DEPLOY TEST 🚀'); // 👈 यहाँ डालो
 
-  await app.listen(port);
+ await app.listen(port, '0.0.0.0');
 
   // ✅ Proper console logs
   console.log(`🚀 Server running on: http://localhost:${port}`);
