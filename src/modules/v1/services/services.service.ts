@@ -1,18 +1,31 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Service, ServiceDocument } from './schemas/service.schema';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
+import { Service } from './schemas/service.schema';
+import type { ServiceDocument } from './schemas/service.schema';
 import { CreateServiceDto } from './dto/create-service.dto';
 
 @Injectable()
 export class ServicesService {
   constructor(
     @InjectModel(Service.name) private serviceModel: Model<ServiceDocument>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
+
+  private async clearCache(id?: string) {
+    await this.cacheManager.del('services_all');
+    if (id) {
+      await this.cacheManager.del(`/api/v1/services/${id}`);
+    }
+  }
 
   async create(createServiceDto: CreateServiceDto): Promise<Service> {
     const createdService = new this.serviceModel(createServiceDto);
-    return createdService.save();
+    const savedService = await createdService.save();
+    await this.clearCache();
+    return savedService;
   }
 
   async findAll(): Promise<Service[]> {
@@ -34,6 +47,7 @@ export class ServicesService {
     if (!updatedService) {
       throw new NotFoundException(`Service with ID ${id} not found`);
     }
+    await this.clearCache(id);
     return updatedService;
   }
 
@@ -42,6 +56,7 @@ export class ServicesService {
     if (!result) {
       throw new NotFoundException(`Service with ID ${id} not found`);
     }
+    await this.clearCache(id);
     return { message: 'Service deleted successfully' };
   }
 }

@@ -1,18 +1,31 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Blog, BlogDocument } from './schemas/blog.schema';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
+import { Blog } from './schemas/blog.schema';
+import type { BlogDocument } from './schemas/blog.schema';
 import { CreateBlogDto } from './dto/create-blog.dto';
 
 @Injectable()
 export class BlogsService {
   constructor(
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
+
+  private async clearCache(id?: string) {
+    await this.cacheManager.del('blogs_all');
+    if (id) {
+      await this.cacheManager.del(`/api/v1/blogs/${id}`);
+    }
+  }
 
   async create(createBlogDto: CreateBlogDto): Promise<Blog> {
     const createdBlog = new this.blogModel(createBlogDto);
-    return createdBlog.save();
+    const savedBlog = await createdBlog.save();
+    await this.clearCache();
+    return savedBlog;
   }
 
   async findAll(): Promise<Blog[]> {
@@ -34,6 +47,7 @@ export class BlogsService {
     if (!updatedBlog) {
       throw new NotFoundException(`Blog with ID ${id} not found`);
     }
+    await this.clearCache(id);
     return updatedBlog;
   }
 
@@ -42,6 +56,7 @@ export class BlogsService {
     if (!result) {
       throw new NotFoundException(`Blog with ID ${id} not found`);
     }
+    await this.clearCache(id);
     return { message: 'Blog deleted successfully' };
   }
 }

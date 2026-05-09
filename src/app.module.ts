@@ -14,6 +14,10 @@ import { BlogsModule } from './modules/v1/blogs/blogs.module';
 import { ContactModule } from './modules/v1/contact/contact.module';
 import { NewsModule } from './modules/v1/news/news.module';
 import { HomeSlidesModule } from './modules/v1/home-slides/home-slides.module';
+import { AboutModule } from './modules/v1/about/about.module';
+import { CartModule } from './modules/v1/cart/cart.module';
+import { OrdersModule } from './modules/v1/orders/orders.module';
+import { NotificationsModule } from './modules/v1/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -40,6 +44,10 @@ import { HomeSlidesModule } from './modules/v1/home-slides/home-slides.module';
     ContactModule,
     NewsModule,
     HomeSlidesModule,
+    AboutModule,
+    CartModule,
+    OrdersModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
